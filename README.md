@@ -1,5 +1,13 @@
 # Ducted Assembly Steady State Heat Transfer Software (DASSH)
 
+## Fork Notice
+
+This version of DASSH has been modified from the version provided by Argonne in the following way:
+
+* The functionality in the `PositionAssignmentTable`, `CoolantFlowTable`, `PressureDropTable`, `AssemblyEnergyBalanceTable`, `InterasmEnergyXferTable`, `DuctTempTable`, `PeakPinTempTable` classes which produce tables for `dassh.out` are adjusted to index results by assembly ID rather than a counting integer from for loops in the code. This ensures that the results in these tables are correctly indexed, even with non-continuous assembly indexing, which is encountered when there are empty lattice positions in a core.
+
+## Original Introduction
+
 [![Build](https://github.com/dassh-dev/dassh/actions/workflows/ci.yml/badge.svg)](https://github.com/dassh-dev/dassh/actions)
 [![codecov](https://codecov.io/gh/dassh-dev/dassh/branch/develop/graph/badge.svg)](https://app.codecov.io/gh/dassh-dev/dassh)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)

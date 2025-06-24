@@ -588,8 +588,8 @@ representation of the flow is not accurate.
                 gr_star = _OMIT
                 gr_star_crit = _OMIT
             self.add_row(
-                # _fmt_idx(a.id),
-                _fmt_idx(i),
+                _fmt_idx(a.id),
+                # _fmt_idx(i),
                 [a.name,
                  _fmt_pos(a.loc),
                  self._ffmt.format(fr),
@@ -833,7 +833,7 @@ Notes
                           self._ffmt0.format(reg.coolant_params['Re']),
                           self._ffmt.format(reg.coolant_params['ff']),
                           _OMIT]
-            self.add_row(_fmt_idx(i), params)
+            self.add_row(_fmt_idx(a.id), params)
 
 
 ########################################################################
@@ -915,8 +915,8 @@ class PressureDropTable(LoggedClass, DASSH_Table):
             for ri in range(len(a.region)):
                 params[ri + 6] = self._ffmt4e.format(
                     a.region[ri].pressure_drop / 1e6)
-            # self.add_row(_fmt_idx(a.id), params)
-            self.add_row(_fmt_idx(i), params)
+            self.add_row(_fmt_idx(a.id), params)
+            # self.add_row(_fmt_idx(i), params)
 
 
 ########################################################################
@@ -986,23 +986,23 @@ class AssemblyEnergyBalanceTable(LoggedClass, DASSH_Table):
 
         # Now add rows to the table
         if r_obj._options['ebal']:
-            for i in range(len(r_obj.assemblies)):
-                self.add_row(_fmt_idx(i), [self._ffmt.format(x)
+            for i, a in enumerate(r_obj.assemblies):
+                self.add_row(_fmt_idx(a.id), [self._ffmt.format(x)
                                            for x in ebal[i]])
             # Gap energy balance; add line to differentiate
             # gap/core balances from assembly balances
             self.add_horizontal_line()
             self.add_row('GAP', [self._ffmt.format(x) for x in gap_ebal])
         else:
-            for i in range(len(r_obj.assemblies)):
+            for i, a in enumerate(r_obj.assemblies):
                 row = [self._ffmt.format(x) for x in ebal[i]]
                 # Omit B, C, SUM, ERROR
                 row[2] = _OMIT
                 row[3] = _OMIT
                 row[7] = _OMIT
                 row[8] = _OMIT
-                # self.add_row(_fmt_idx(a.id), row)
-                self.add_row(_fmt_idx(i), row)
+                self.add_row(_fmt_idx(a.id), row)
+                # self.add_row(_fmt_idx(i), row)
             # Add blank line to split off core balance
             self.add_horizontal_line()
         self.add_row('CORE', core_ebal)
@@ -1159,7 +1159,7 @@ Duct face key                  Face 6    =   Face 1
                               'Face 4', 'Face 5', 'Face 6'])
         self.add_horizontal_line()
 
-        for i in range(len(r_obj.assemblies)):
+        for i, a in enumerate(r_obj.assemblies):
             # Get heat transfer total per side - need DASSH ID to pull
             # data from the interassembly HT array
             per_side = np.zeros(6)
@@ -1208,8 +1208,8 @@ Duct face key                  Face 6    =   Face 1
                 else:
                     entry += f' ({(adj_id[col]):03d})'
                 row.append(entry)
-            # self.add_row(_fmt_idx(a.id), row)
-            self.add_row(_fmt_idx(i), row)
+            self.add_row(_fmt_idx(a.id), row)
+            # self.add_row(_fmt_idx(i), row)
 
 
 ########################################################################
@@ -1304,8 +1304,7 @@ class CoolantTempTable(LoggedClass, DASSH_Table):
                              f'({len_unit})'])
         self.add_horizontal_line()
 
-        for i in range(len(r_obj.assemblies)):
-            a = r_obj.assemblies[i]
+        for i, a in enumerate(r_obj.assemblies):
 
             # Outlet and peak coolant temperatures
             tc_avg = self.temp_conv(a.avg_coolant_temp)
@@ -1342,7 +1341,7 @@ class CoolantTempTable(LoggedClass, DASSH_Table):
                     self._ffmt2.format(tc_max_tot),
                     tc_max_unc,
                     tc_max_ht]
-            self.add_row(_fmt_idx(i), data)
+            self.add_row(_fmt_idx(a.id), data)
 
 
 ########################################################################
@@ -1435,8 +1434,7 @@ Duct face key                  Face 6    =   Face 1
                               f'({len_unit})'])
         self.add_horizontal_line()
 
-        for i in range(len(r_obj.assemblies)):
-            a = r_obj.assemblies[i]
+        for i, a in enumerate(r_obj.assemblies):
             # nduct = len(a._peak['duct'])
             face_temps = self.temp_conv(
                 self._get_avg_duct_face_temp(a))
@@ -1452,8 +1450,8 @@ Duct face key                  Face 6    =   Face 1
                 data = [_fmt_pos(a.loc), str(d + 1)]
                 data += [self._ffmt2.format(td) for td in face_temps[d]]
                 data += [self._ffmt2.format(td_max_tot), td_max_ht]
-                # self.add_row(_fmt_idx(a.id), data)
-                self.add_row(_fmt_idx(i), data)
+                self.add_row(_fmt_idx(a.id), data)
+                # self.add_row(_fmt_idx(i), data)
 
     @staticmethod
     def _get_avg_duct_face_temp(asm):
@@ -1644,7 +1642,7 @@ temperatures are those calculated directly by DASSH.
         tab = []
         for i in range(len(r_obj.assemblies)):
             a = r_obj.assemblies[i]
-            row = [_fmt_idx(i)]
+            row = [_fmt_idx(a.id)]
             if 'pin' in a._peak.keys():
                 k = self._lookup_keys[self._component][self._region]
                 row += self._get_nominal_temps(a, a._peak['pin'][k][2])
